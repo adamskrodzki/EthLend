@@ -1,9 +1,14 @@
-var Token = artifacts.require("Token");
+var Token = artifacts.require("DestructableToken");
 
-contract("Token", function(accounts) {
-  it("should assert true", function(done) {
-    var token = Token.deployed();
+contract("Token", async function(accounts) {
+  var token;
+  beforeEach(async function() {
+    token = await Token.new();
+  });
+  it("should assert true", async function() {
     assert.isTrue(true);
-    done();
+  });
+  afterEach(async function() {
+    await token.destroy();
   });
 });
