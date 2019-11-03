@@ -14,27 +14,26 @@ contract TxLendToken is ERC20,ReentrancyGuard {
     constructor() public {
     }
 
-    function deposit() public payable nonReentrant() {
-
+    function computeAmount(uint amount) public view returns(uint){
         uint amountToMint = 0;
         if(totalSupply()==0){
-            totalAmount = msg.value;
-            amountToMint = msg.value;
+            amountToMint = amount;
         }else{
-            amountToMint =  msg.value.mul(totalSupply()).div(totalAmount);
-            totalAmount = totalAmount.add(msg.value);
+            amountToMint =  amount.mul(totalSupply()).div(totalAmount);
         }
+        return amountToMint;
+    } 
+
+    function deposit() public payable nonReentrant() {
+        require(msg.value>0,"You must deposit some eth");
+        uint amountToMint = computeAmount(msg.value);
         _mint(msg.sender, amountToMint);
+        totalAmount = totalAmount.add(msg.value);
     }
 
     function withdraw(uint amount) external nonReentrant(){
         uint amountToWithdraw = totalAmount.mul(amount).div(totalSupply());
         _burn(msg.sender,amount);
         address(msg.sender).call.value(amountToWithdraw)(bytes(""));
-    }
-
-    function () external payable{
-
-        this.deposit.value(msg.value)();
     }
 }
