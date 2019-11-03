@@ -11,9 +11,6 @@ contract TxLendToken is ERC20,ReentrancyGuard {
 
     uint256 private _guardCounter;
 
-    constructor() public {
-    }
-
     function computeAmount(uint amount) public view returns(uint){
         uint amountToMint = 0;
         if(totalSupply()==0){
