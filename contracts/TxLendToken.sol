@@ -56,6 +56,7 @@ contract TxLendToken is ERC20,ReentrancyGuard {
         }
         uint amountToWithdraw = totalAmount.mul(amount).div(totalSupply());
         _burn(msg.sender,amount);
-        address(msg.sender).call.value(amountToWithdraw)(bytes(""));
+        (bool status,) = address(msg.sender).call.value(amountToWithdraw)(bytes(""));
+        require(status==true, "funds transfer failed");
     }
 }
