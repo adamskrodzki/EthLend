@@ -13,8 +13,24 @@ contract TxLendToken is ERC20,ReentrancyGuard {
     
     address public validBorrower;
 
+    uint private borrowedAmount;
+
     constructor(address _validB) public {
         validBorrower = _validB;
+    }
+
+    function borrow(uint amount) external {
+        require(msg.sender==validBorrower,"You cannot borrow");
+        require(amount<=address(this).balance,"Balance too low");
+        borrowedAmount = amount;
+        (bool status,) = validBorrower.call.value(amount)(bytes(""));
+        require(status==true, "funds transfer failed");
+    }
+
+    function giveBack(uint amount) external payable{
+        require(msg.value>=amount,"Need to give back at least what borrowed");
+        require(msg.sender==validBorrower,"Only borrower can return");
+        require(borrowedAmount==amount,"declared amount not true");
     }
 
     function computeAmount(uint amount) public view returns(uint){
