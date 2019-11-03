@@ -3,7 +3,7 @@ var Token = artifacts.require("DestructableToken");
 contract("Token withdraw", async function (accounts) {
   var token;
   beforeEach(async function () {
-    token = await Token.new();
+    token = await Token.new(accounts[4]);
     var testerBalance = await web3.eth.getBalance(accounts[0]);
   });
   describe("withdraw", async function () {

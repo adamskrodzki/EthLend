@@ -10,6 +10,12 @@ contract TxLendToken is ERC20,ReentrancyGuard {
     uint public totalAmount;
 
     uint256 private _guardCounter;
+    
+    address public validBorrower;
+
+    constructor(address _validB) public {
+        validBorrower = _validB;
+    }
 
     function computeAmount(uint amount) public view returns(uint){
         uint amountToMint = 0;
@@ -29,6 +35,9 @@ contract TxLendToken is ERC20,ReentrancyGuard {
     }
 
     function withdraw(uint amount) external nonReentrant(){
+        if(totalSupply()==0 || amount==0){
+            return;
+        }
         uint amountToWithdraw = totalAmount.mul(amount).div(totalSupply());
         _burn(msg.sender,amount);
         address(msg.sender).call.value(amountToWithdraw)(bytes(""));

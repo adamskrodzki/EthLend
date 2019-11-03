@@ -6,7 +6,7 @@ contract("Token reentrancy", async function (accounts) {
   var token;
   var badActor;
   beforeEach(async function () {
-    token = await Token.new();
+    token = await Token.new(accounts[4]);
     badActor = await BadActor.new(token.address);
     goodActor = await GoodActor.new(token.address);
     badActor.deposit({
