@@ -1,6 +1,6 @@
 var Token = artifacts.require("DestructableToken");
 
-contract("Token withdraw", async function (accounts) {
+contract("Token", async function (accounts) {
   var token;
   beforeEach(async function () {
     token = await Token.new(accounts[4]);

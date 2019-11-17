@@ -1,52 +1,63 @@
 pragma solidity ^0.5.0;
 import '../ILegalCaller.sol';
-import '../Borrower.sol';
+import '../Lender.sol';
 
 contract ExampleValidCaller is ILegalCaller {
-  address payable public borrower;
+  address payable public lender;
   bool public isCorrect;
   bool public isEmpty;
-  uint private amountToBorrow ;
-  constructor(address payable _borrowerAddress) public payable {
-    borrower = _borrowerAddress;
+  bool public isIncomplete;
+  constructor(address payable _lenderAddress) public {
+    lender = _lenderAddress;
+  }
+
+  function deposit() external payable{
   }
 
   function computeAmountToBorrow() public pure returns(uint){
     return 1 ether;
   }
 
-  function callBorrowerCorrectly() public{
-    amountToBorrow = computeAmountToBorrow();
+  function callLenderCorrectly() public{
+    uint amountToBorrow = computeAmountToBorrow();
     isCorrect = true;
     isEmpty = false;
-    Borrower(borrower).borrow(amountToBorrow);
+    Lender(lender).borrow(amountToBorrow);
   }
 
-  function callBorrowerNoFee() public{
-    amountToBorrow = computeAmountToBorrow();
+  function callLenderNoFee() public{
+    uint amountToBorrow = computeAmountToBorrow();
     isCorrect = false;
     isEmpty = false;
-    Borrower(borrower).borrow(amountToBorrow);
+    Lender(lender).borrow(amountToBorrow);
   }
 
-  
-  function callBorrowerCheater() public{
-    //should be written globally so it is constant during whole execution and can be fetched from invoke()
-    amountToBorrow = computeAmountToBorrow();
+  function callLenderCheater() public{
+    uint amountToBorrow = computeAmountToBorrow();
     isCorrect = false;
     isEmpty = true;
-    Borrower(borrower).borrow(amountToBorrow);
+    Lender(lender).borrow(amountToBorrow);
   }
 
-  function invoke() external payable{
-    // arbitrage logic
+  function callLenderCheater2() public{
+    uint amountToBorrow = computeAmountToBorrow();
+    isCorrect = false;
+    isEmpty = false;
+    isIncomplete = true;
+    Lender(lender).borrow(amountToBorrow);
+  }
+
+  function invoke(uint amount,uint fee) external payable{
     if(isCorrect){
-      uint fee = Borrower(borrower).getFee(amountToBorrow);
-      require(address(this).balance>=amountToBorrow+fee,"no funds to repay all");
-      borrower.transfer(amountToBorrow+fee);
+      require(address(this).balance>=amount+fee,"no funds to repay all");
+      lender.transfer(amount+fee);
     }else{
       if(!isEmpty){
-        borrower.transfer(amountToBorrow);
+        if(isIncomplete){
+          lender.transfer(amount-1);
+        }else{
+          lender.transfer(amount);
+        }
       }
     }
   }

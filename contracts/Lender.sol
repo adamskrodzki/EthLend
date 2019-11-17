@@ -3,7 +3,7 @@ pragma solidity >=0.4.21 <0.6.0;
 import "./TxLendToken.sol";
 import "./ILegalCaller.sol";
 
-contract Borrower{
+contract Lender{
 
     address public tokenAddress;
     bool public inBorrow;
@@ -27,18 +27,18 @@ contract Borrower{
         require(amount<=address(tokenAddress).balance,"funds not sufficient to borrow that much");
         TxLendToken(tokenAddress).borrow(amount);
         uint amountOnStart = address(this).balance;
-        ILegalCaller(msg.sender).invoke.value(amount)();
+        ILegalCaller(msg.sender).invoke.value(amount)(amount,getFee(amount));
         uint amountOnEnd = address(this).balance;
-        require(amountOnStart<amountOnEnd, "not all funds returned");
-        require(amountOnStart<=amountOnEnd+getFee(amount), "fee not paid");
-        earnings = amountOnEnd-amountOnStart;
+        require(amountOnStart<=amountOnEnd, "not all funds returned");
+        require(amountOnStart+getFee(amount)<=amountOnEnd, "fee not paid");
+        earnings = amountOnEnd.sub(amountOnStart);
         earnings = earnings.mul(95).div(100);
         TxLendToken(tokenAddress).giveBack.value(amount+earnings)(amount);
         inBorrow = false;
     }
 
     function () external payable {
-        require(msg.sender == address(tokenAddress) || inBorrow,"only token can send funds to borrower");
+        require(msg.sender == address(tokenAddress) || inBorrow,"only token can send funds to lender");
     }
 
 }

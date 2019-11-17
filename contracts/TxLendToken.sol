@@ -7,7 +7,6 @@ contract TxLendToken is ERC20,ReentrancyGuard {
     string public name = "TxLendToken";
     string public symbol = "TLT";
     uint public decimals = 18;
-    uint public totalAmount;
 
     uint256 private _guardCounter;
     
@@ -38,7 +37,7 @@ contract TxLendToken is ERC20,ReentrancyGuard {
         if(totalSupply()==0){
             amountToMint = amount;
         }else{
-            amountToMint =  amount.mul(totalSupply()).div(totalAmount);
+            amountToMint =  amount.mul(totalSupply()).div(address(this).balance-amount);
         }
         return amountToMint;
     } 
@@ -47,14 +46,13 @@ contract TxLendToken is ERC20,ReentrancyGuard {
         require(msg.value>0,"You must deposit some eth");
         uint amountToMint = computeAmount(msg.value);
         _mint(msg.sender, amountToMint);
-        totalAmount = totalAmount.add(msg.value);
     }
 
     function withdraw(uint amount) external nonReentrant(){
         if(totalSupply()==0 || amount==0){
             return;
         }
-        uint amountToWithdraw = totalAmount.mul(amount).div(totalSupply());
+        uint amountToWithdraw = address(this).balance.mul(amount).div(totalSupply());
         _burn(msg.sender,amount);
         (bool status,) = address(msg.sender).call.value(amountToWithdraw)(bytes(""));
         require(status==true, "funds transfer failed");

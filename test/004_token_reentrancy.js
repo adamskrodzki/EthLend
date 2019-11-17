@@ -2,7 +2,7 @@ var Token = artifacts.require("DestructableToken");
 var BadActor = artifacts.require("BadActor");
 var GoodActor = artifacts.require("GoodActor");
 
-contract("Token reentrancy", async function (accounts) {
+contract("Token", async function (accounts) {
   var token;
   var badActor;
   beforeEach(async function () {
@@ -18,21 +18,23 @@ contract("Token reentrancy", async function (accounts) {
       value: web3.utils.toWei("1.1", "ether")
     })
   });
-  it("badActor should fail on withdraw()", async function () {
+  describe("reentrancy", async function () {
+    it("badActor should fail on withdraw()", async function () {
 
-    var promise = badActor.withdraw();
+      var promise = badActor.withdraw();
 
-    try {
-      await promise;
-      assert.isTrue(false);
-    } catch (ex) {
-      assert.isTrue(ex.toString().indexOf("ReentrancyGuard: reentrant call") != -1, "some other exception " + ex.toString());
-    }
+      try {
+        await promise;
+        assert.isTrue(false);
+      } catch (ex) {
+        assert.isTrue(ex.toString().indexOf("ReentrancyGuard: reentrant call") != -1, "some other exception " + ex.toString());
+      }
 
-  });
-  it("goodActor should not fail on withdraw()", async function () {
-    await goodActor.withdraw();
-  });
+    });
+    it("goodActor should not fail on withdraw()", async function () {
+      await goodActor.withdraw();
+    });
+  })
   afterEach(async function () {
     await token.destroy();
     await badActor.destroy();
