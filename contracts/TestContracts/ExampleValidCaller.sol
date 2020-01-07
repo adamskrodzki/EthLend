@@ -48,6 +48,13 @@ contract ExampleValidCaller is ILegalCaller {
   }
 
   function invoke(uint amount,uint fee) external payable{
+  /*
+  Instead of this 'if' there should be implementation of arbitrage here followed by 
+  
+   lender.transfer(amount+fee);
+
+    operation
+  */
     if(isCorrect){
       require(address(this).balance>=amount+fee,"no funds to repay all");
       lender.transfer(amount+fee);
