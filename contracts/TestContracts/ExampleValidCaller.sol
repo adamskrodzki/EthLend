@@ -12,6 +12,9 @@ contract ExampleValidCaller is ILegalCaller {
   }
 
   function deposit() external payable{
+  /*
+  only for testing purposes
+   */
   }
 
   function computeAmountToBorrow() public pure returns(uint){
