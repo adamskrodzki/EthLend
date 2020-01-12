@@ -1,32 +1,64 @@
 <template>
-  <div v-if="isDrizzleInitialized" id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-
-    <div class="section">
-      <h2>Show the Accounts</h2>
-      <drizzle-account units="Ether" :precision="2" />
+  <div>
+    <div v-if="isDrizzleInitialized" id="app">
+      <div class="section">
+        <CurrentNetwork v-on:networkFound="setupNetwork" />
+      </div>
+      <div class="section">
+        <ContractBalance v-bind:blockExpUrl="etherscanUrl" />
+      </div>
+      <div class="section">
+        <DepositETH v-bind:blockExpUrl="etherscanUrl" />
+      </div>
+      <div class="section">
+        <UsersBalance v-bind:blockExpUrl="etherscanUrl" />
+      </div>
+      <div class="section">
+        <WithdrawEth v-bind:blockExpUrl="etherscanUrl" />
+      </div>
     </div>
-
-    <div class="section">
-      <h2>Tutorial Token</h2>
-      <TutorialToken />
-    </div>
+    <div v-else>Loading...</div>
   </div>
-
-  <div v-else>Loading...</div>
 </template>
 
 <script>
-import TutorialToken from "./TutorialToken";
+import CurrentNetwork from "./CurrentNetwork";
+import ContractBalance from "./ContractBalance";
+import DepositETH from "./DepositETH";
+import UsersBalance from "./UsersBalance";
+import WithdrawEth from "./WithdrawETH";
 import { mapGetters } from "vuex";
 
 export default {
   name: "app",
   components: {
-    TutorialToken
+    CurrentNetwork,
+    ContractBalance,
+    DepositETH,
+    UsersBalance,
+    WithdrawEth
+  },
+  watch: {
+    activeAccount(prevVal, newVal) {
+      // eslint-disable-next-line
+      console.log("Values", prevVal, newVal);
+    }
   },
 
-  computed: mapGetters("drizzle", ["isDrizzleInitialized"]),
+  methods: {
+    setupNetwork(event) {
+      // eslint-disable-next-line
+      console.log("Setting up network", event.name);
+      if (event.name == "Rinkeby") {
+        this.etherscanUrl = "https://rinkeby.etherscan.io/address/";
+      }
+    }
+  },
+
+  computed: {
+    ...mapGetters("drizzle", ["isDrizzleInitialized"]),
+    ...mapGetters("accounts", ["activeAccount", "activeBalance"])
+  },
   mounted: function() {
     // eslint-disable-next-line
     console.log("mounting works");
@@ -34,6 +66,11 @@ export default {
       // eslint-disable-next-line
       console.log("event catched", payload);
     });
+  },
+  data() {
+    return {
+      etherscanUrl: "invalid"
+    };
   }
 };
 </script>
