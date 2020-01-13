@@ -8,7 +8,9 @@
       <CurrentNetwork v-on:networkFound="setupNetwork" />
     </div>
     <el-tabs type="card">
-      <el-tab-pane label="What is it?">User</el-tab-pane>
+      <el-tab-pane label="What is it?">
+        <ProjectDescription />
+      </el-tab-pane>
       <el-tab-pane label="Haw to use It?">Config</el-tab-pane>
       <el-tab-pane label="Pool ETH" v-if="isDrizzleInitialized && isEthereum">
         <div class="section" v-if="supportedNetwork">
@@ -39,6 +41,7 @@ import IncorrectNetworkInfo from "./IncorrectNetworkInfo";
 import DepositETH from "./DepositETH";
 import UsersBalance from "./UsersBalance";
 import WithdrawEth from "./WithdrawETH";
+import ProjectDescription from "./ProjectDescription";
 import { mapGetters } from "vuex";
 import TxLendToken from "./contracts/TxLendToken.json";
 import options from "./drizzleOptions";
@@ -51,7 +54,8 @@ export default {
     DepositETH,
     UsersBalance,
     WithdrawEth,
-    IncorrectNetworkInfo
+    IncorrectNetworkInfo,
+    ProjectDescription
   },
   watch: {
     activeAccount(prevVal, newVal) {

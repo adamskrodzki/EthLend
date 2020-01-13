@@ -62,7 +62,19 @@ To do so Smart Contract needs to implement `invoke(uint amount,uint fee) externa
 
 #### Kovan
 
+Token: [0x30D64c5be9FCd96365b4397265eb3cDc6f94F523](https://kovan.etherscan.io/address/0x30D64c5be9FCd96365b4397265eb3cDc6f94F523)
+
+Lender: [0x3eC858037679D2dD052089fAcf45292136389D59](https://kovan.etherscan.io/address/0x3eC858037679D2dD052089fAcf45292136389D59)
+
+ExampleUser:
+
 #### Rinkeby
+
+Token: [0x80e2A1A0b953B0da50730C8A275b856522745aCe](https://rinkeby.etherscan.io/address/0x80e2A1A0b953B0da50730C8A275b856522745aCe)
+
+Lender: [0x3B5B31771c89AFbdA488E09f7C9b98Ce05E98a24](https://rinkeby.etherscan.io/address/0x3B5B31771c89AFbdA488E09f7C9b98Ce05E98a24)
+
+ExampleUser:
 
 #### Mainnet
 
