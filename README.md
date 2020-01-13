@@ -78,4 +78,6 @@ ExampleUser:
 
 #### Mainnet
 
+**Since it is early testing stage no Minnet deployment yet**
+
 **This project is in alpha and has not been audited Yet. You use it on Your own risk.**
