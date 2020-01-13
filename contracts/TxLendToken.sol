@@ -54,7 +54,10 @@ contract TxLendToken is ERC20,ReentrancyGuard {
         emit Deposit(msg.value,amountToMint);
     }
 
-    function getUsersBalance(address user) external returns(uint256){
+    function getUsersBalance(address user) public view returns(uint256){
+        if(totalSupply()==0){
+            return 0;
+        }
         return getBalance().mul(balanceOf(user)).div(totalSupply());
     }
 

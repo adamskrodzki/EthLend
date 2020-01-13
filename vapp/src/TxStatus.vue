@@ -35,7 +35,7 @@ export default {
         const that = this;
         setTimeout(() => {
           that.setHide();
-        }, 10000);
+        }, 3000);
       }
     },
     txIndex() {

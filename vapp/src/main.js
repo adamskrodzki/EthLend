@@ -1,6 +1,7 @@
 import Vue from "vue";
 import App from "./App.vue";
 import Vuex from "vuex";
+import ElementUI from "element-ui";
 
 // Todo: Update this when publishing
 // import drizzleVuePlugin from '@drizzle/vue-plugin'
@@ -8,10 +9,12 @@ import Vuex from "vuex";
 import drizzleVuePlugin from "@drizzle/vue-plugin";
 
 Vue.use(Vuex);
+Vue.use(ElementUI);
 const store = new Vuex.Store({ state: {} });
 
-Vue.use(drizzleVuePlugin, { store, drizzleOptions: { contracts: [] } });
-
+if (window.ethereum) {
+  Vue.use(drizzleVuePlugin, { store, drizzleOptions: { contracts: [] } });
+}
 Vue.config.productionTip = false;
 
 new Vue({

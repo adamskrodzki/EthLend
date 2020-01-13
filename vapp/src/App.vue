@@ -1,26 +1,34 @@
 <template>
-  <div>
-    <div v-if="isDrizzleInitialized" id="app">
-      <div class="section">
-        <CurrentNetwork v-on:networkFound="setupNetwork" />
-      </div>
-      <div class="section">
-        <IncorrectNetworkInfo v-if="supportedNetwork == false" />
-      </div>
-      <div class="section" v-if="supportedNetwork">
-        <ContractBalance v-bind:blockExpUrl="etherscanUrl" />
-      </div>
-      <div class="section" v-if="supportedNetwork">
-        <DepositETH v-bind:blockExpUrl="etherscanUrl" />
-      </div>
-      <div class="section" v-if="supportedNetwork">
-        <UsersBalance v-bind:blockExpUrl="etherscanUrl" />
-      </div>
-      <div class="section" v-if="supportedNetwork">
-        <WithdrawEth v-bind:blockExpUrl="etherscanUrl" />
-      </div>
+  <div v-cloak>
+    <div class="section" v-if="!isEthereum">
+      To use all capabilities of this project use web3 provider like Metamask
     </div>
-    <div v-else>Loading...</div>
+    <div class="section" v-if="isDrizzleInitialized && isEthereum">
+      <IncorrectNetworkInfo v-if="supportedNetwork == false" />
+      <CurrentNetwork v-on:networkFound="setupNetwork" />
+    </div>
+    <el-tabs type="card">
+      <el-tab-pane label="What is it?">User</el-tab-pane>
+      <el-tab-pane label="Haw to use It?">Config</el-tab-pane>
+      <el-tab-pane label="Pool ETH" v-if="isDrizzleInitialized && isEthereum">
+        <div class="section" v-if="supportedNetwork">
+          <DepositETH v-bind:blockExpUrl="etherscanUrl" />
+        </div>
+
+        <div class="section" v-if="supportedNetwork">
+          <WithdrawEth v-bind:blockExpUrl="etherscanUrl" />
+        </div>
+        <div class="section" v-if="supportedNetwork">
+          <ContractBalance v-bind:blockExpUrl="etherscanUrl" />
+        </div>
+        <div class="section" v-if="supportedNetwork && account">
+          <UsersBalance
+            v-bind:blockExpUrl="etherscanUrl"
+            v-bind:activeAccount="account"
+          />
+        </div>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -48,7 +56,7 @@ export default {
   watch: {
     activeAccount(prevVal, newVal) {
       // eslint-disable-next-line
-      console.log("Values", prevVal, newVal);
+      console.log("new account", prevVal, newVal);
     }
   },
 
@@ -58,11 +66,14 @@ export default {
       console.log("Setting up network", event.name);
       if (event.name == "Rinkeby" || event.name == "Kovan") {
         //TODO Add Contract on suppported network
-
-        this.drizzleInstance.addContract(
-          TxLendToken,
-          options.events["TxLendToken"]
-        );
+        try {
+          this.drizzleInstance.addContract(
+            TxLendToken,
+            options.events["TxLendToken"]
+          );
+        } catch (e) {
+          //
+        }
         this.supportedNetwork = true;
       }
       if (event.name == "Rinkeby") {
@@ -76,20 +87,34 @@ export default {
 
   computed: {
     ...mapGetters("drizzle", ["isDrizzleInitialized", "drizzleInstance"]),
-    ...mapGetters("accounts", ["activeAccount", "activeBalance"])
+    ...mapGetters("accounts", ["activeAccount"])
   },
   mounted: function() {
-    // eslint-disable-next-line
-    console.log("mounting works");
+    if (window.ethereum) {
+      this.isEthereum = true;
+    } else {
+      return;
+    }
+    window.ethereum.on("accountsChanged", accounts => {
+      // eslint-disable-next-line
+      if (this.account) {
+        document.location.reload();
+      }
+
+      this.account = accounts[0];
+    });
     this.$drizzleEvents.$on("drizzle/contractEvent", payload => {
       // eslint-disable-next-line
       console.log("event catched", payload);
+      this.account = this.activeAccount;
     });
   },
   data() {
     return {
       etherscanUrl: "invalid",
-      supportedNetwork: false
+      supportedNetwork: false,
+      account: undefined,
+      isEthereum: false
     };
   }
 };
@@ -103,5 +128,8 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+.el-button {
+  min-width: 10em;
 }
 </style>

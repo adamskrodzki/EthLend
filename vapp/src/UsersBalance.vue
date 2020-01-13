@@ -16,9 +16,8 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "UserBalance",
-  props: ["blockExpUrl"],
+  props: ["blockExpUrl", "activeAccount"],
   computed: {
-    ...mapGetters("accounts", ["activeAccount", "activeBalance"]),
     ...mapGetters("drizzle", ["isDrizzleInitialized", "drizzleInstance"]),
     ...mapGetters("contracts", ["getContractData"]),
 
@@ -65,11 +64,26 @@ export default {
         method: "balanceOf"
       });
       return value;
-    },
-
-    placeholders() {
-      return ["To Address", "Amount to Send"];
     }
+  },
+  watch: {
+    activeAccount: function() {
+      this.$store.dispatch("drizzle/REGISTER_CONTRACT", {
+        contractName: "TxLendToken",
+        method: "getUsersBalance",
+        methodArgs: [this.activeAccount]
+      });
+      this.$store.dispatch("drizzle/REGISTER_CONTRACT", {
+        contractName: "TxLendToken",
+        method: "balanceOf",
+        methodArgs: [this.activeAccount]
+      });
+    }
+  },
+  data: () => {
+    return {
+      counter: 0
+    };
   },
   created() {
     this.$store.dispatch("drizzle/REGISTER_CONTRACT", {

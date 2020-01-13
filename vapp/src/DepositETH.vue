@@ -1,7 +1,20 @@
 <template>
   <div v-if="isDrizzleInitialized">
-    <input v-model="ethAmount" placeholder="amount to deposit" /> ETH
-    <button v-on:click="makeDeposit">Deposit</button>
+    <el-form :inline="true">
+      <el-form-item label="Deposit">
+        <el-input
+          placeholder="amount to deposit"
+          v-model="ethAmount"
+        ></el-input>
+      </el-form-item>
+      <el-form-item>
+        ETH
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="makeDeposit" type="primary">Deposit</el-button>
+      </el-form-item>
+    </el-form>
+
     <TxStatus v-bind:blockExpUrl="blockExpUrl" v-bind:txIndex="txIndex" />
   </div>
   <div v-else>Loading...</div>
@@ -37,7 +50,7 @@ export default {
   },
   data() {
     return {
-      ethAmount: 0,
+      ethAmount: undefined,
       txIndex: -1
     };
   },

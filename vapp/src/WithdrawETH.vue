@@ -1,7 +1,20 @@
 <template>
   <div v-if="isDrizzleInitialized">
-    <input v-model="ethAmount" placeholder="amount of TLT to burn" /> ETH
-    <button v-on:click="makeDeposit">Withdraw</button>
+    <el-form :inline="true">
+      <el-form-item label="Withdraw">
+        <el-input
+          placeholder="amount of TLT to burn"
+          v-model="ethAmount"
+        ></el-input>
+      </el-form-item>
+      <el-form-item>
+        ETH
+      </el-form-item>
+      <el-form-item>
+        <el-button @click="makeWithdraw" type="primary">Withdraw</el-button>
+      </el-form-item>
+    </el-form>
+
     <TxStatus v-bind:blockExpUrl="blockExpUrl" v-bind:txIndex="txIndex" />
   </div>
   <div v-else>Loading...</div>
@@ -23,7 +36,7 @@ export default {
     }
   },
   methods: {
-    makeDeposit() {
+    makeWithdraw() {
       // eslint-disable-next-line
       console.log("Withdrawing ", this.weiAmount, "wei");
       var dep = this.drizzleInstance.contracts["TxLendToken"].methods[
@@ -37,7 +50,7 @@ export default {
   },
   data() {
     return {
-      ethAmount: 0,
+      ethAmount: undefined,
       txIndex: -1
     };
   },
