@@ -24,10 +24,13 @@ export default {
       if (this.networkId == 4) {
         return "Rinkeby";
       }
+      if (this.networkId == 42) {
+        return "Kovan";
+      }
       if (this.networkId == -1) {
         return "Loading...";
       }
-      return "Not Suported";
+      return `Unknown (id=${this.networkId})`;
     },
 
     placeholders() {

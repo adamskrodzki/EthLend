@@ -22,9 +22,7 @@ export default {
     ...mapGetters("drizzle", ["isDrizzleInitialized", "drizzleInstance"]),
     ...mapGetters("contracts", ["getContractData"]),
     isVisible() {
-      const retVal =
-        (this.completedAt == 0 || Date.now() - this.completedAt < 10) &&
-        this.txIndex != -1;
+      const retVal = !this.hide && this.txIndex != -1;
       return retVal;
     },
     totalUrl() {
@@ -34,15 +32,27 @@ export default {
   watch: {
     status() {
       if (this.status == "success") {
-        this.completedAt == Date.now();
+        const that = this;
+        setTimeout(() => {
+          that.setHide();
+        }, 10000);
       }
+    },
+    txIndex() {
+      this.hide = false;
+    }
+  },
+  methods: {
+    setHide() {
+      this.hide = true;
     }
   },
   data() {
     return {
-      completedAt: 0,
       status: "",
-      txHash: ""
+      txHash: "",
+      hide: false,
+      renderId: 0
     };
   },
   created() {
@@ -60,8 +70,7 @@ export default {
           that.txHash = ".....";
         }
       }
-      that.$forceUpdate();
-    }, 100);
+    }, 500);
   }
 };
 </script>

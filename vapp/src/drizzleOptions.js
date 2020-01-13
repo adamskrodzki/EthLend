@@ -1,5 +1,3 @@
-import TxLendToken from "./contracts/TxLendToken.json";
-
 const options = {
   web3: {
     block: false,
@@ -8,7 +6,7 @@ const options = {
       url: "wss://rinkeby.infura.io/v3/3baae2e6c67c435689a674e3634cc8b2"
     }
   },
-  contracts: [TxLendToken],
+  contracts: [],
   events: {
     TxLendToken: [
       {
