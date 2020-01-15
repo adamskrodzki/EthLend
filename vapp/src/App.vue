@@ -11,7 +11,9 @@
       <el-tab-pane label="What is it?">
         <ProjectDescription />
       </el-tab-pane>
-      <el-tab-pane label="Haw to use It?">Config</el-tab-pane>
+      <el-tab-pane label="Haw to use It?">
+        <FaqDescription v-bind:supportedNetwork="supportedNetwork" />
+      </el-tab-pane>
       <el-tab-pane label="Pool ETH" v-if="isDrizzleInitialized && isEthereum">
         <div class="section" v-if="supportedNetwork">
           <DepositETH v-bind:blockExpUrl="etherscanUrl" />
@@ -41,8 +43,10 @@ import IncorrectNetworkInfo from "./IncorrectNetworkInfo";
 import DepositETH from "./DepositETH";
 import UsersBalance from "./UsersBalance";
 import WithdrawEth from "./WithdrawETH";
+import FaqDescription from "./FaqDescription";
 import ProjectDescription from "./ProjectDescription";
 import { mapGetters } from "vuex";
+import ExampleCaller from "./contracts/ExampleCaller.json";
 import TxLendToken from "./contracts/TxLendToken.json";
 import options from "./drizzleOptions";
 
@@ -55,7 +59,8 @@ export default {
     UsersBalance,
     WithdrawEth,
     IncorrectNetworkInfo,
-    ProjectDescription
+    ProjectDescription,
+    FaqDescription
   },
   watch: {
     activeAccount(prevVal, newVal) {
@@ -75,6 +80,7 @@ export default {
             TxLendToken,
             options.events["TxLendToken"]
           );
+          this.drizzleInstance.addContract(ExampleCaller, []);
         } catch (e) {
           //
         }
@@ -95,8 +101,13 @@ export default {
   },
   mounted: function() {
     if (window.ethereum) {
-      this.isEthereum = true;
+      window.ethereum.enable().then(() => {
+        // eslint-disable-next-line
+        console.log("enable arguments", arguments);
+        this.isEthereum = true;
+      });
     } else {
+      this.isEthereum = false;
       return;
     }
     window.ethereum.on("accountsChanged", accounts => {

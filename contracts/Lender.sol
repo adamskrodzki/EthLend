@@ -2,8 +2,9 @@ pragma solidity >=0.4.21 <0.6.0;
 
 import "./TxLendToken.sol";
 import "./ILegalCaller.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
-contract Lender{
+contract Lender is Ownable{
 
     address public tokenAddress;
     bool public inBorrow;
@@ -39,6 +40,10 @@ contract Lender{
 
     function () external payable {
         require(msg.sender == address(tokenAddress) || inBorrow,"only token can send funds to lender");
+    }
+
+    function drawFees() public onlyOwner{
+        address(msg.sender).transfer(address(this).balance);
     }
 
 }
