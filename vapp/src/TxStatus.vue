@@ -25,6 +25,25 @@ export default {
       const retVal = !this.hide && this.txIndex != -1;
       return retVal;
     },
+    txHash() {
+      if (!this.state || !this.state.transactionStack || this.txIndex == -1) {
+        return undefined;
+      }
+      const txHashV = this.state.transactionStack[this.txIndex];
+      if (txHashV && txHashV.startsWith("TEMP")) {
+        return ".....";
+      }
+      return txHashV;
+    },
+    status() {
+      if (!this.txHash) {
+        return undefined;
+      }
+      if (this.txHash && this.txHash.startsWith("....")) {
+        return "waiting confirmation";
+      }
+      return this.state.transactions[this.txHash].status;
+    },
     totalUrl() {
       return this.blockExpUrl.replace("address", "tx") + this.txHash;
     }
@@ -49,28 +68,20 @@ export default {
   },
   data() {
     return {
-      status: "",
-      txHash: "",
       hide: false,
-      renderId: 0
+      renderId: 0,
+      state: {}
     };
   },
   created() {
-    var that = this;
-    setInterval(() => {
-      const state = that.drizzleInstance.store.getState();
-      const txHash = state.transactionStack[that.txIndex];
-      if (txHash && !txHash.startsWith("TEMP")) {
-        const status = state.transactions[txHash].status;
-        that.status = status;
-        that.txHash = txHash;
-      } else {
-        if (txHash && txHash.startsWith("TEMP")) {
-          that.status = "waiting confirmation";
-          that.txHash = ".....";
-        }
-      }
+    const that = this;
+    this.state = this.drizzleInstance.store.getState();
+    const handler = this._.debounce(() => {
+      // eslint-disable-next-line
+      console.log("this.drizzleInstance.store.subscribe ");
+      that.state = that.drizzleInstance.store.getState();
     }, 500);
+    this.drizzleInstance.store.subscribe(handler);
   }
 };
 </script>

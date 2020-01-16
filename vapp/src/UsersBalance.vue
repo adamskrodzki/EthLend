@@ -20,10 +20,12 @@ export default {
   computed: {
     ...mapGetters("drizzle", ["isDrizzleInitialized", "drizzleInstance"]),
     ...mapGetters("contracts", ["getContractData"]),
+    ...mapGetters("contracts", ["contractInstances"]),
 
     accounts() {
       return [this.activeAccount];
     },
+
     totalUrl() {
       return (
         this.blockExpUrl + this.drizzleInstance.contracts["TxLendToken"].address
@@ -52,32 +54,33 @@ export default {
       }
     },
     balance() {
-      var value = this.getContractData({
-        contract: "TxLendToken",
-        method: "getUsersBalance"
-      });
-      return value;
+      try {
+        const val = this.contractInstances.TxLendToken.getUsersBalance[
+          this.userBalanceKey
+        ].value;
+        return val;
+      } catch (e) {
+        return 0;
+      }
     },
     tokenBalance() {
-      var value = this.getContractData({
-        contract: "TxLendToken",
-        method: "balanceOf"
-      });
-      return value;
+      try {
+        return this.contractInstances.TxLendToken.balanceOf[
+          this.balanceOfUserKey
+        ].value;
+      } catch (e) {
+        return 0;
+      }
     }
   },
   watch: {
-    activeAccount: function() {
-      this.$store.dispatch("drizzle/REGISTER_CONTRACT", {
-        contractName: "TxLendToken",
-        method: "getUsersBalance",
-        methodArgs: [this.activeAccount]
-      });
-      this.$store.dispatch("drizzle/REGISTER_CONTRACT", {
-        contractName: "TxLendToken",
-        method: "balanceOf",
-        methodArgs: [this.activeAccount]
-      });
+    activeAccount() {
+      this.userBalanceKey = this.drizzleInstance.contracts.TxLendToken.methods.getUsersBalance.cacheCall(
+        this.activeAccount
+      );
+      this.balanceOfUserKey = this.drizzleInstance.contracts.TxLendToken.methods.balanceOf.cacheCall(
+        this.activeAccount
+      );
     }
   },
   data: () => {
@@ -86,16 +89,12 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("drizzle/REGISTER_CONTRACT", {
-      contractName: "TxLendToken",
-      method: "getUsersBalance",
-      methodArgs: [this.activeAccount]
-    });
-    this.$store.dispatch("drizzle/REGISTER_CONTRACT", {
-      contractName: "TxLendToken",
-      method: "balanceOf",
-      methodArgs: [this.activeAccount]
-    });
+    this.userBalanceKey = this.drizzleInstance.contracts.TxLendToken.methods.getUsersBalance.cacheCall(
+      this.activeAccount
+    );
+    this.balanceOfUserKey = this.drizzleInstance.contracts.TxLendToken.methods.balanceOf.cacheCall(
+      this.activeAccount
+    );
   }
 };
 </script>

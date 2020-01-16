@@ -18,6 +18,7 @@ export default {
     ...mapGetters("accounts", ["activeAccount", "activeBalance"]),
     ...mapGetters("drizzle", ["isDrizzleInitialized", "drizzleInstance"]),
     ...mapGetters("contracts", ["getContractData"]),
+    ...mapGetters("contracts", ["contractInstances"]),
 
     accounts() {
       return [this.activeAccount];
@@ -38,12 +39,14 @@ export default {
         );
       }
     },
+
     balance() {
-      var value = this.getContractData({
-        contract: "TxLendToken",
-        method: "getBalance"
-      });
-      return value;
+      try {
+        return this.contractInstances.TxLendToken.getBalance[this.balanceKey]
+          .value;
+      } catch (e) {
+        return 0;
+      }
     },
 
     placeholders() {
@@ -51,11 +54,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("drizzle/REGISTER_CONTRACT", {
-      contractName: "TxLendToken",
-      method: "getBalance",
-      methodArgs: []
-    });
+    this.balanceKey = this.drizzleInstance.contracts.TxLendToken.methods.getBalance.cacheCall();
   }
 };
 </script>

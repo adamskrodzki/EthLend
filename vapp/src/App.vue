@@ -12,7 +12,10 @@
         <ProjectDescription />
       </el-tab-pane>
       <el-tab-pane label="Haw to use It?">
-        <FaqDescription v-bind:supportedNetwork="supportedNetwork" />
+        <FaqDescription
+          v-bind:supportedNetwork="supportedNetwork"
+          v-bind:blockExpUrl="etherscanUrl"
+        />
       </el-tab-pane>
       <el-tab-pane label="Pool ETH" v-if="isDrizzleInitialized && isEthereum">
         <div class="section" v-if="supportedNetwork">

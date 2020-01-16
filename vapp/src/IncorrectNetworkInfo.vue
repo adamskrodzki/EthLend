@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="warning">
     This is experimental project in early testing phase, so only
     <b>Rinkeby</b> and <b>Kovan</b> network are being supported, switch network
     in <b>Metamask</b>
@@ -12,4 +12,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.warning {
+  color: red;
+}
+</style>
