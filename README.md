@@ -66,7 +66,7 @@ Token: [0x91923a7b15b7b771343a7d027de8a5954a5f9153](https://kovan.etherscan.io/a
 
 Lender: [0x601059599afdeab84a3c1173f5a1a6c12ff3c2d9](https://kovan.etherscan.io/address/0x601059599afdeab84a3c1173f5a1a6c12ff3c2d9#code)
 
-ExampleUser: [0xb5BFCe2ff5C9f1BC11ADcD3f86390fBCB4dAb1F1](https://rinkeby.etherscan.io/address/0xb5BFCe2ff5C9f1BC11ADcD3f86390fBCB4dAb1F1#code)
+ExampleUser: [0xF4024d7361Db1105c7c1F0C5C7CD819373bBb5f3](https://kovan.etherscan.io/address/0xF4024d7361Db1105c7c1F0C5C7CD819373bBb5f3#code)
 
 #### Rinkeby
 
