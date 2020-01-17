@@ -2,7 +2,7 @@
   <div>
     <div v-if="isDrizzleInitialized">
       Your balance is <b>{{ totalBalance }}</b> ETH staked in
-      <a v-bind:href="totalUrl" target="_blank">ETHLend contract</a>
+      <a v-bind:href="totalUrl" target="_blank">TxLendToken contract</a>
     </div>
     <div v-if="isDrizzleInitialized">
       Your have <b>{{ totalTokenBalance }}</b> TxLend Tokens

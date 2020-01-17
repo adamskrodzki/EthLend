@@ -1,7 +1,10 @@
 <template>
   <div v-if="isDrizzleInitialized">
     <el-form :inline="true">
-      <p>Smart Contract owns {{ ethOwned }} ETH of own funds</p>
+      <p>
+        Smart Contract owns {{ ethOwned }} ETH of own funds and can borrow up to
+        {{ totalBalance }} ETH
+      </p>
       <el-form-item label="Borrow">
         <el-input placeholder="amount to borrow" v-model="ethAmount"></el-input>
       </el-form-item>
@@ -65,6 +68,26 @@ export default {
         return 0;
       }
     },
+
+    totalBalance() {
+      if (this.balance == "loading") {
+        return "Loading...";
+      } else {
+        return this.drizzleInstance.web3.utils.fromWei(
+          this.balance.toString(),
+          "ether"
+        );
+      }
+    },
+
+    balance() {
+      try {
+        return this.contractInstances.TxLendToken.getBalance[this.balanceKey]
+          .value;
+      } catch (e) {
+        return 0;
+      }
+    },
     feeToPay() {
       try {
         return this.contractInstances.ExampleCaller.getFee[this.feeKey].value;
@@ -102,6 +125,7 @@ export default {
   created() {
     const key = this.drizzleInstance.contracts.ExampleCaller.methods.ownBalance.cacheCall();
     this.ownBalanceKey = key;
+    this.balanceKey = this.drizzleInstance.contracts.TxLendToken.methods.getBalance.cacheCall();
   },
   methods: {
     borrow() {

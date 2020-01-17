@@ -1,2 +1,4 @@
 node_modules
 vapp/src/contracts/
+dist
+ethlend.code-workspace
